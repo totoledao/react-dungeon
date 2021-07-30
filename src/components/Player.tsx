@@ -13,7 +13,8 @@ export default function Player({ Xpos, Ypos, ...rest } : ActorProps) {
     position: absolute;
     left: ${Ypos*32}px;  
     top: ${Xpos*32}px;
-    transform: translateY(-24px);   
+    transform: translateY(-24px);
+    z-index: 100;
     `;
 
   return(
