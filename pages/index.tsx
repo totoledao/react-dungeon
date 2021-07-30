@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Dungeon from '2d-dungeon';
 import styles from '../styles/Home.module.css';
 
@@ -14,6 +14,24 @@ export default function Home() {
   const [walls, setWalls] = useState<{ i: number, j: number}[]>([]);
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
   const [dungeonLevel, setDungeonLevel] = useState( 1 );
+
+  const floorsTiling = React.useMemo(
+    () =>( 
+    floors.map((num) =>
+          <TileFloor key={`${num.i}-${num.j}`}
+            Xpos={num.i} Ypos={num.j}
+            handleMovement={() => setPlayerPos({i: num.i, j: num.j})}  
+          /> )
+  ),[floors])
+  
+  const wallsTiling = React.useMemo(
+    () =>( 
+    walls.map((num) =>
+          <TileWall key={`${num.i}-${num.j}`}
+            Xpos={num.i} Ypos={num.j}
+            handleMovement={() => console.log({i: num.i, j: num.j})}  
+          /> )
+  ),[walls])
 
   useEffect(() => {
     DungeonGenerator(29, 29);
@@ -76,20 +94,8 @@ export default function Home() {
   return (
     <main>
     
-    { 
-      floors.map((num) =>
-          <TileFloor key={`${num.i}-${num.j}`}
-            Xpos={num.i} Ypos={num.j}
-            handleMovement={() => setPlayerPos({i: num.i, j: num.j})}  
-          /> )
-    }
-    {
-      walls.map((num) =>
-          <TileWall key={`${num.i}-${num.j}`}
-            Xpos={num.i} Ypos={num.j}
-            handleMovement={() => console.log(num.i, num.j)}
-          /> )
-    }
+    { floorsTiling }
+    { wallsTiling }
 
     <Player Xpos={playerPos.i} Ypos={playerPos.j}/>
      
