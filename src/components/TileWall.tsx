@@ -29,7 +29,7 @@ const wall: StaticImageData[] = [wall_1,
   wall_6,
 ];
 
-export default function TileWall({Xpos, Ypos, ...rest} : TileProps) {
+export default function TileWall({Xpos, Ypos, handleMovement, ...rest} : TileProps) {
 
   const Tile = styled.div`    
     position: absolute;
@@ -42,7 +42,9 @@ export default function TileWall({Xpos, Ypos, ...rest} : TileProps) {
 
   return (
       <Tile>
-        <Image src={wall[rng]} alt="wall" width="32" height="32" />  
+        <Image src={wall[rng]} alt="wall" width="32" height="32"
+          onClick={ handleMovement }
+        />  
       </Tile>
   )
 }

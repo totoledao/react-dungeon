@@ -32,7 +32,7 @@ const floor: StaticImageData[] = [floor_1,
   floor_8
 ];
 
-export default function TileFloor({Xpos, Ypos, ...rest} : TileProps) {
+export default function TileFloor({Xpos, Ypos, handleMovement, ...rest} : TileProps) {
 
   const Tile = styled.div`
     position: absolute;
@@ -45,7 +45,9 @@ export default function TileFloor({Xpos, Ypos, ...rest} : TileProps) {
 
   return (
       <Tile>
-        <Image src={floor[rng]} alt="{floor}" width="32" height="32" />
+        <Image src={floor[rng]} alt="floor" width="32" height="32"
+          onClick={ handleMovement }
+        />
       </Tile>
   )
 }

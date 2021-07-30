@@ -13,10 +13,11 @@ export default function Home() {
   const [floors, setFloors] = useState<{ i: number, j: number}[]>([]);
   const [walls, setWalls] = useState<{ i: number, j: number}[]>([]);
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
+  const [dungeonLevel, setDungeonLevel] = useState( 1 );
 
   useEffect(() => {
     DungeonGenerator(29, 29);
-  },[]);
+  },[ setDungeonLevel ]);
   
   function DungeonGenerator(Xsize: number, Ysize: number){
 
@@ -71,29 +72,23 @@ export default function Home() {
     }
 
   }
-  
-  
 
   return (
     <main>
     
     { 
-      floors.map((num) =>     
-       
-        <div key={`${num.i}-${num.j}`}>
-          <TileFloor Xpos={num.i} Ypos={num.j}/>
-        </div>
-        
-      )
+      floors.map((num) =>
+          <TileFloor key={`${num.i}-${num.j}`}
+            Xpos={num.i} Ypos={num.j}
+            handleMovement={() => setPlayerPos({i: num.i, j: num.j})}  
+          /> )
     }
-    { 
-      walls.map((num) =>     
-       
-        <div key={`${num.i}-${num.j}`}>
-          <TileWall Xpos={num.i} Ypos={num.j}/>
-        </div>
-        
-      )
+    {
+      walls.map((num) =>
+          <TileWall key={`${num.i}-${num.j}`}
+            Xpos={num.i} Ypos={num.j}
+            handleMovement={() => console.log(num.i, num.j)}
+          /> )
     }
 
     <Player Xpos={playerPos.i} Ypos={playerPos.j}/>
