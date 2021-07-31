@@ -2,10 +2,16 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import Dungeon from '2d-dungeon';
 import styles from '../styles/Home.module.css';
 
+//scripts
+import playerMovement from '../src/utils/playerMovement';
+
+//tiles
 import TileFloor from "../src/components/TileFloor";
 import TileWall from "../src/components/TileWall";
+
+//actors
 import Player from "../src/components/Player";
-import playerMovement from '../src/utils/playerMovement';
+import Imp from '../src/components/Imp';
 
 export default function Home() {
 
@@ -35,6 +41,19 @@ export default function Home() {
         handleMovement={() => console.log({i: num.i, j: num.j})}
       /> )
   ),[walls])
+
+  const enemiesPlacement = React.useMemo(
+    () =>( 
+    floors.map((num) => Math.random() >= 0.9
+      ?
+      <Imp key={ `imp-${num.i}-${num.j}` }
+        Xpos={num.i} Ypos={num.j}
+        handleInteraction={ () => console.log("Ouch!") }
+      />
+      :
+      console.log("Not here at "+ num.i +" " + num.j)
+      )
+  ),[floors])
 
   useEffect(() => {
     DungeonGenerator(29, 29);
@@ -99,8 +118,9 @@ export default function Home() {
     
     { floorsTiling }
     { wallsTiling }
+    { enemiesPlacement }
 
-    <Player Xpos={playerPos.i} Ypos={playerPos.j}/>
+    <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
      
     </main>
   )
