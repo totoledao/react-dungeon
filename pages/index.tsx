@@ -5,8 +5,7 @@ import styles from '../styles/Home.module.css';
 import TileFloor from "../src/components/TileFloor";
 import TileWall from "../src/components/TileWall";
 import Player from "../src/components/Player";
-
-
+import playerMovement from '../src/utils/playerMovement';
 
 export default function Home() {
 
@@ -15,22 +14,26 @@ export default function Home() {
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
   const [dungeonLevel, setDungeonLevel] = useState( 1 );
 
+
+
   const floorsTiling = React.useMemo(
     () =>( 
     floors.map((num) =>
-          <TileFloor key={`${num.i}-${num.j}`}
-            Xpos={num.i} Ypos={num.j}
-            handleMovement={() => setPlayerPos({i: num.i, j: num.j})}  
-          /> )
+      <TileFloor key={`${num.i}-${num.j}`}
+        Xpos={num.i} Ypos={num.j}
+        //handleMovement={() => setPlayerPos({i: num.i, j: num.j})}
+        handleMovement={() => setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) ) }
+      /> )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   ),[floors])
   
   const wallsTiling = React.useMemo(
     () =>( 
     walls.map((num) =>
-          <TileWall key={`${num.i}-${num.j}`}
-            Xpos={num.i} Ypos={num.j}
-            handleMovement={() => console.log({i: num.i, j: num.j})}  
-          /> )
+      <TileWall key={`${num.i}-${num.j}`}
+        Xpos={num.i} Ypos={num.j}
+        handleMovement={() => console.log({i: num.i, j: num.j})}
+      /> )
   ),[walls])
 
   useEffect(() => {
