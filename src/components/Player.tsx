@@ -7,7 +7,7 @@ import player from '../sprites/knight_m_idle_anim_f3.png';
 const wi = 16* 2;
 const he = 28* 2;
 
-export default function Player({ Xpos, Ypos, ...rest } : ActorProps) {
+export default function Player({ Xpos, Ypos, handleInteraction, ...rest } : ActorProps) {
 
     const Player = styled.div`
     position: absolute;
@@ -20,7 +20,7 @@ export default function Player({ Xpos, Ypos, ...rest } : ActorProps) {
   return(
 
     <Player>
-      <Image src={player} alt="player" width={wi} height={he} />
+      <Image src={player} alt="player" width={wi} height={he} onClick={ handleInteraction }/>
     </Player>
   )
   
