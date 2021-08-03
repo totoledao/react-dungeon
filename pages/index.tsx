@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import Dungeon from '2d-dungeon';
 import styles from '../styles/Home.module.css';
 
@@ -12,6 +12,11 @@ import TileWall from "../src/components/TileWall";
 //actors
 import Player from "../src/components/Player";
 import Imp from '../src/components/Imp';
+import enemyInteraction from '../src/utils/enemyInteraction';
+
+//Player Position
+export let currentPlayerPosX : number;
+export let currentPlayerPosY : number;
 
 export default function Home() {
 
@@ -20,7 +25,8 @@ export default function Home() {
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
   const [dungeonLevel, setDungeonLevel] = useState( 1 );
 
-
+  currentPlayerPosX =  playerPos.i;
+  currentPlayerPosY =  playerPos.j;
 
   const floorsTiling = React.useMemo(
     () =>( 
@@ -48,7 +54,7 @@ export default function Home() {
       ?
       <Imp key={ `imp-${num.i}-${num.j}` }
         Xpos={num.i} Ypos={num.j}
-        handleInteraction={ () => console.log("Ouch!") }
+        handleInteraction={ () => enemyInteraction( {i: num.i, j: num.j} ) }
       />
       :
       console.log("Not here at "+ num.i +" " + num.j)
@@ -58,7 +64,7 @@ export default function Home() {
   useEffect(() => {
     DungeonGenerator(29, 29);
   },[ setDungeonLevel ]);
-  
+
   function DungeonGenerator(Xsize: number, Ysize: number){
 
     let dungeon = new Dungeon({
