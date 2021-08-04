@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import ActorProps from '../types/Actor';
 import Image from 'next/image';
 
-import player from '../sprites/knight_m_idle_anim_f3.png';
+import player from '../sprites/player.png';
 
 const wi = 16* 2;
-const he = 28* 2;
+const he = 19* 2;
 
 export default function Player({ Xpos, Ypos, handleInteraction, ...rest } : ActorProps) {
 
@@ -13,7 +13,7 @@ export default function Player({ Xpos, Ypos, handleInteraction, ...rest } : Acto
     position: absolute;
     left: ${Ypos*32}px;  
     top: ${Xpos*32}px;
-    transform: translateY(-24px);
+    transform: translateY(-10px);
     z-index: 100;
     `;
 
