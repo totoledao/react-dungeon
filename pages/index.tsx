@@ -1,9 +1,6 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Dungeon from '2d-dungeon';
 import styles from '../styles/Home.module.css';
-
-//scripts
-import playerMovement from '../src/utils/playerMovement';
 
 //tiles
 import TileFloor from "../src/components/TileFloor";
@@ -11,7 +8,10 @@ import TileWall from "../src/components/TileWall";
 
 //actors
 import Player from "../src/components/Player";
-import Imp from '../src/components/Imp';
+import Enemy, {EnemyMovement} from '../src/components/Enemy';
+
+//utils
+import playerMovement from '../src/utils/playerMovement';
 import enemyInteraction from '../src/utils/enemyInteraction';
 
 //Player Position
@@ -27,6 +27,10 @@ export default function Home() {
 
   currentPlayerPosX =  playerPos.i;
   currentPlayerPosY =  playerPos.j;
+
+  const enemyPosRef = useRef<EnemyMovement>();
+ 
+  //const handleEnemyMovement = enemyPosRef.current?.moveEnemy();
 
   const floorsTiling = React.useMemo(
     () =>( 
@@ -50,16 +54,30 @@ export default function Home() {
 
   const enemiesPlacement = React.useMemo(
     () =>( 
-    floors.map((num) => Math.random() >= 0.9
-      ?
-      <Imp key={ `imp-${num.i}-${num.j}` }
+    floors.map((num) => {
+      if(Math.random() >= 0.94) {
+        return (       
+        <Enemy key={ `imp-${num.i}-${num.j}` }
         Xpos={num.i} Ypos={num.j}
+        ref={ enemyPosRef }
         handleInteraction={ () => enemyInteraction( {i: num.i, j: num.j} ) }
-      />
-      :
-      console.log("Not here at "+ num.i +" " + num.j)
-      )
+        />
+      )}
+  })
   ),[floors])
+
+  // const enemiesPlacement = React.useMemo(
+  //   () =>( 
+  //   floors.map((num) => Math.random() >= 0.9
+  //     ?
+  //     <Enemy key={ `imp-${num.i}-${num.j}` }
+  //       Xpos={num.i} Ypos={num.j}
+  //       handleInteraction={ () => enemyInteraction( {i: num.i, j: num.j} ) }
+  //     />
+  //     :
+  //     console.log("Not here at "+ num.i +" " + num.j)
+  //     )
+  // ),[floors])
 
   useEffect(() => {
     DungeonGenerator(29, 29);
@@ -119,12 +137,31 @@ export default function Home() {
 
   }
 
+  function moveEnemies () {
+    console.log(enemiesPlacement);
+    enemiesPlacement.map( (obj) => {
+      obj?.props.Xpos.value + 1 ;
+    });
+  }
+
   return (
     <main>
     
     { floorsTiling }
     { wallsTiling }
     { enemiesPlacement }
+
+    {/* <Enemy key={ "imp-0" }
+         Xpos={10} Ypos={10}
+         handleInteraction={ () => enemyInteraction( {i: 10, j: 10} ) }
+       /> */}
+
+    <button style={{position: "absolute", left: "1000px" }}
+      onClick={() => enemiesPlacement.map(() => {        
+        enemyPosRef.current?.moveEnemy();
+      })
+    }
+    > MOVE </button>
 
     <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
      
