@@ -8,8 +8,6 @@ import imp from '../sprites/imp_idle_anim_f0.png';
 
 export type EnemyMovement = {
   moveEnemy : () => void;
-  updatedXpos : any;
-  updatedYpos : any;
 }
 
 const Enemy : React.ForwardRefRenderFunction<EnemyMovement> =
@@ -33,7 +31,7 @@ const Enemy : React.ForwardRefRenderFunction<EnemyMovement> =
     }
 
     useImperativeHandle(ref, () => ({
-        moveEnemy, updatedXpos, updatedYpos,
+        moveEnemy,
     }));
 
     const Enemy = styled.div`
