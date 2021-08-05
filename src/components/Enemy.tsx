@@ -8,8 +8,8 @@ import imp from '../sprites/imp_idle_anim_f0.png';
 
 export type EnemyMovement = {
   moveEnemy : () => void;
-  updatedXpos : MutableRefObject<number | null>;
-  updatedYpos : MutableRefObject<number | null>;
+  updatedXpos : any;
+  updatedYpos : any;
 }
 
 const Enemy : React.ForwardRefRenderFunction<EnemyMovement> =
