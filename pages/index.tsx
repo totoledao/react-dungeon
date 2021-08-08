@@ -89,7 +89,7 @@ export default function Home() {
     }
     console.log(cleanedUpFloors);
 
-    let initialPlayerPos : { i : number, j : number };
+    let initialPlayerPos : { i : number, j : number } = { i: 0, j: 0};
 
     for(let piece of dungeon.children) {
       //piece.position; //[x, y] position of top left corner of the piece within dungeon
