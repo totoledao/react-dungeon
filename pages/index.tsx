@@ -108,10 +108,10 @@ export default function Home() {
     }
 
     function findIndexOfValue (array : {i: number, j: number}[], value : {i: number, j: number}) {
-      for(var i = 0; i < array.length; i++) {
-          if(array[i].i == value.i) {            
-            if(array[i].j == value.j) {              
-              return i;
+      for(var x = 0; x < array.length; x++) {
+          if(array[x].i == value.i) {            
+            if(array[x].j == value.j) {              
+              return x;
           }}
       }
       return -1;
