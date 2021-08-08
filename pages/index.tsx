@@ -87,7 +87,38 @@ export default function Home() {
             cleanedUpFloors.push( {i,j} );
         }}
     }
+    console.log(cleanedUpFloors);
+
+    let initialPlayerPos : { i : number, j : number };
+
+    for(let piece of dungeon.children) {
+      //piece.position; //[x, y] position of top left corner of the piece within dungeon
+      //piece.tag; // 'any', 'initial' or any other key of 'rooms' options property
+      //piece.size; //[width, height]
+      //piece.walls.get([x, y]); //x, y- local position of piece, returns true if wall, false if empty
+      for (let exit of piece.exits) {
+          let {x, y, dest_piece} = exit; // local position of exit and piece it exits to
+          piece.global_pos([x, y]); // [x, y] global pos of the exit          
+      }  
     
+      setPlayerPos({ i: dungeon.start_pos[0], j: dungeon.start_pos[1] });
+
+      initialPlayerPos = { i: dungeon.start_pos[0], j: dungeon.start_pos[1] };
+   
+    }
+
+    function findIndexOfValue (array : {i: number, j: number}[], value : {i: number, j: number}) {
+      for(var i = 0; i < array.length; i++) {
+          if(array[i].i == value.i) {            
+            if(array[i].j == value.j) {              
+              return i;
+          }}
+      }
+      return -1;
+    }
+    console.log(initialPlayerPos);
+    cleanedUpFloors.splice(findIndexOfValue (cleanedUpFloors, initialPlayerPos), 1);
+
     for (let x = 0; x < cleanedUpFloors.length; x++) {
       
       let i = cleanedUpFloors[x].i;
@@ -97,19 +128,7 @@ export default function Home() {
             setEnemies( oldValue => [ ...oldValue, {i,j}] );            
         }
     }
-
-    for(let piece of dungeon.children) {
-      //piece.position; //[x, y] position of top left corner of the piece within dungeon
-      //piece.tag; // 'any', 'initial' or any other key of 'rooms' options property
-      //piece.size; //[width, height]
-      //piece.walls.get([x, y]); //x, y- local position of piece, returns true if wall, false if empty
-      for (let exit of piece.exits) {
-          let {x, y, dest_piece} = exit; // local position of exit and piece it exits to
-          piece.global_pos([x, y]); // [x, y] global pos of the exit
-      }  
-    
-    setPlayerPos({ i: dungeon.start_pos[0], j: dungeon.start_pos[1] });
-    }
+    console.log(cleanedUpFloors);
 
   }
 
