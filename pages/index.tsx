@@ -142,7 +142,10 @@ export default function Home() {
     floors.map((num) =>
       <TileFloor key={`${num.i}-${num.j}`}
         Xpos={num.i} Ypos={num.j}        
-        handleMovement={() => setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) ) }
+        handleMovement={() => {
+          setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) );
+          handleEnemyTurn();
+        }}
       /> )
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ),[floors]);
@@ -161,7 +164,10 @@ export default function Home() {
     enemies.map((num) =>    
         <Enemy key={ `imp-${num.i}-${num.j}` }
           Xpos={num.i} Ypos={num.j}
-          handleInteraction={ () => enemyInteraction( {i: num.i, j: num.j} ) }
+          handleInteraction={ () => {
+            enemyInteraction( {i: num.i, j: num.j} );
+            handleEnemyTurn();
+          }}
         />
       )
   ),[enemies]);
@@ -169,6 +175,10 @@ export default function Home() {
   useEffect(() => {
     DungeonGenerator(29, 29);
   },[setDungeonLevel]);
+
+  function handleEnemyTurn(){
+    setEnemies(enemyTurn());
+  }
 
   return (
     <main>    
@@ -180,7 +190,7 @@ export default function Home() {
     <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
 
     <button style={{position: "absolute", left: "1000px" }}
-      onClick={ () => setEnemies(enemyTurn()) }
+      onClick={ () => handleEnemyTurn() }
     > MOVE </button>
      
     </main>
