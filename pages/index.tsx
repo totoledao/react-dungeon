@@ -1,5 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Dungeon from '2d-dungeon';
+import pathfinding from 'pathfinding';
 import styles from '../styles/Home.module.css';
 
 //tiles
@@ -19,6 +20,8 @@ import enemyTurn from '../src/utils/enemyTurn';
 export let currentPlayerPosX : number;
 export let currentPlayerPosY : number;
 export let currentEnemiesPos : { i: number, j: number}[];
+export let pathFinderGrid : any;
+export let pathFinder : any;
 
 export default function Home() {
 
@@ -67,11 +70,15 @@ export default function Home() {
     let totalWalls : { i: number, j: number}[] = [];
     let cleanedUpFloors : { i: number, j: number}[] = [];
 
+    pathFinderGrid = new pathfinding.Grid(Xsize, Ysize);    
+    pathFinder = new pathfinding.AStarFinder();
+
     for (let i = 0; i < Xsize; i++) {    
       for (let j = 0; j < Ysize; j++) {
         if ( dungeon.walls.get([i, j]) ) {
           setWalls(oldValue => [ ...oldValue, {i,j}]);
-          totalWalls.push( {i,j} );      
+          totalWalls.push( {i,j} );
+          pathFinderGrid.setWalkableAt(i, j, false);   
         } else totalFloors.push( {i,j} );          
       }
     }
@@ -87,8 +94,7 @@ export default function Home() {
             cleanedUpFloors.push( {i,j} );
         }}
     }
-    console.log(cleanedUpFloors);
-
+    
     let initialPlayerPos : { i : number, j : number } = { i: 0, j: 0};
 
     for(let piece of dungeon.children) {
@@ -116,7 +122,7 @@ export default function Home() {
       }
       return -1;
     }
-    console.log(initialPlayerPos);
+    
     cleanedUpFloors.splice(findIndexOfValue (cleanedUpFloors, initialPlayerPos), 1);
 
     for (let x = 0; x < cleanedUpFloors.length; x++) {
@@ -128,8 +134,7 @@ export default function Home() {
             setEnemies( oldValue => [ ...oldValue, {i,j}] );            
         }
     }
-    console.log(cleanedUpFloors);
-
+    
   }
 
   const floorsTiling = React.useMemo(
@@ -175,7 +180,7 @@ export default function Home() {
     <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
 
     <button style={{position: "absolute", left: "1000px" }}
-      onClick={ () => enemyTurn() }
+      onClick={ () => setEnemies(enemyTurn()) }
     > MOVE </button>
      
     </main>
