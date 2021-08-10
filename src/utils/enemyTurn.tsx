@@ -6,6 +6,8 @@ import {
   pathFinder,
 } from '../../pages/';
 
+import isAdjacent from './isAdjacent'
+
 export default function enemyTurn ( ) {
   enemiesAttack();
   return enemiesMove();
@@ -52,12 +54,10 @@ function enemiesMove ( ) {
       nextPosY = path[1][1];
     }
 
-    if (nextPosX === currentPlayerPosX
-        &&
-        nextPosY === currentPlayerPosY) {
-
-          newEnemiesPos.push({i: currentEnemiesPos[index].i , j: currentEnemiesPos[index].j});
-          pathFinderGrid.setWalkableAt(currentEnemiesPos[index].i, currentEnemiesPos[index].j, false);       
+    if (isAdjacent(currentEnemiesPos[index].i, currentEnemiesPos[index].j, true) === true) {
+      
+        newEnemiesPos.push({i: currentEnemiesPos[index].i , j: currentEnemiesPos[index].j});
+        pathFinderGrid.setWalkableAt(currentEnemiesPos[index].i, currentEnemiesPos[index].j, false);       
 
     } else {
       newEnemiesPos.push({i: nextPosX, j: nextPosY});

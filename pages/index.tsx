@@ -168,7 +168,7 @@ export default function Home() {
           Xpos={num.i} Ypos={num.j}
           handleInteraction={ () => {
             enemyInteraction( {i: num.i, j: num.j} );
-            isAdjacent(num.i, num.j) && handleEnemyTurn();
+            isAdjacent(num.i, num.j, true) && handleEnemyTurn();
           }}
         />
       )
