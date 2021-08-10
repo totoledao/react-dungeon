@@ -128,10 +128,11 @@ export default function Home() {
     for (let x = 0; x < cleanedUpFloors.length; x++) {
       
       let i = cleanedUpFloors[x].i;
-      let j = cleanedUpFloors[x].j;      
+      let j = cleanedUpFloors[x].j;
        
         if (Math.random() >= 0.94) {    
-            setEnemies( oldValue => [ ...oldValue, {i,j}] );            
+            setEnemies( oldValue => [ ...oldValue, {i,j}] );
+            pathFinderGrid.setWalkableAt(i, j, false);           
         }
     }
     
@@ -177,7 +178,9 @@ export default function Home() {
   },[setDungeonLevel]);
 
   function handleEnemyTurn(){
-    setEnemies(enemyTurn());
+    setTimeout( () => {
+      setEnemies(enemyTurn());
+    },100)
   }
 
   return (
@@ -189,7 +192,7 @@ export default function Home() {
     
     <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
 
-    <button style={{position: "absolute", left: "1000px" }}
+    <button style={{position: "absolute", left: "950px", top: "500px" }}
       onClick={ () => handleEnemyTurn() }
     > MOVE </button>
      
