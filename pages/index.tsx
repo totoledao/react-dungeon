@@ -15,6 +15,7 @@ import Enemy from '../src/components/Enemy';
 import playerMovement from '../src/utils/playerMovement';
 import enemyInteraction from '../src/utils/enemyInteraction';
 import enemyTurn from '../src/utils/enemyTurn';
+import isAdjacent from '../src/utils/isAdjacent';
 
 //exports
 export let currentPlayerPosX : number;
@@ -144,8 +145,8 @@ export default function Home() {
       <TileFloor key={`${num.i}-${num.j}`}
         Xpos={num.i} Ypos={num.j}        
         handleMovement={() => {
-          setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) );
-          handleEnemyTurn();
+          setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) );          
+          isAdjacent(num.i, num.j) && handleEnemyTurn();
         }}
       /> )
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,7 +168,7 @@ export default function Home() {
           Xpos={num.i} Ypos={num.j}
           handleInteraction={ () => {
             enemyInteraction( {i: num.i, j: num.j} );
-            handleEnemyTurn();
+            isAdjacent(num.i, num.j) && handleEnemyTurn();
           }}
         />
       )
