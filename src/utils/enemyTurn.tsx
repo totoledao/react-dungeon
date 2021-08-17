@@ -1,6 +1,7 @@
 import {
   currentPlayerPosX,
   currentPlayerPosY,
+  currentPlayerHealth,
   currentEnemiesPos,
   pathFinderGrid,
   pathFinder,
@@ -8,13 +9,20 @@ import {
 
 import isAdjacent from './isAdjacent'
 
-export default function enemyTurn ( ) {
-  enemiesAttack();
-  return enemiesMove();
-}
+let damageDoneThisTurn : number[] = [];
 
 function enemiesAttack() {
-  console.log('attack');
+  damageDoneThisTurn = []; 
+  let  damageDone = 0;
+
+  currentEnemiesPos.map((enemy) => {
+    if ( isAdjacent(enemy.i, enemy.j, true) === true ) {      
+      damageDone = damageDone - 2;
+      damageDoneThisTurn.push( 2 );         
+    }
+  })
+  
+  return damageDone;
 }
 
 function enemiesMove ( ) {
@@ -93,4 +101,6 @@ function getRandomDir (posX : number, posY : number) {
   }
 
   return nextRandomPos;
-} 
+}
+
+export {enemiesAttack, enemiesMove, damageDoneThisTurn};

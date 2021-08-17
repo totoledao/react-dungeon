@@ -11,15 +11,22 @@ import TileWall from "../src/components/TileWall";
 import Player from "../src/components/Player";
 import Enemy from '../src/components/Enemy';
 
+//components
+import TextMessage from '../src/components/UI/TextMessage';
+import DamageMessage from '../src/components/UI/DamageMessage';
+
 //utils
 import playerMovement from '../src/utils/playerMovement';
 import enemyInteraction from '../src/utils/enemyInteraction';
-import enemyTurn from '../src/utils/enemyTurn';
+import {enemiesAttack, enemiesMove, damageDoneThisTurn} from '../src/utils/enemyTurn';
 import isAdjacent from '../src/utils/isAdjacent';
 
-//exports
+//player stats exports
 export let currentPlayerPosX : number;
 export let currentPlayerPosY : number;
+export let currentPlayerHealth : number;
+export let currentPlayerDamage : number;
+//other exports
 export let currentEnemiesPos : { i: number, j: number}[];
 export let pathFinderGrid : any;
 export let pathFinder : any;
@@ -29,12 +36,42 @@ export default function Home() {
   const [floors, setFloors] = useState<{ i: number, j: number}[]>([]);
   const [walls, setWalls] = useState<{ i: number, j: number}[]>([]);
   const [enemies, setEnemies] = useState<{ i: number, j: number}[]>([]);
-  const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
   const [dungeonLevel, setDungeonLevel] = useState( 1 );
 
+  const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
+  const [playerHealth, setPlayerHealth] = useState( 10 );
+  const [playerDamage, setPlayerDamage] = useState( 3 );
+  
+  const [displayTextMessage, setDisplayTextMessage] = useState( { display: false, message: "You can't do it"} );
+  const [displayPlayerDamageMessage, setDisplayPlayerDamageMessage] = useState(
+    { display: false, message: currentPlayerDamage, posX: 0, posY: 0 }
+  );
+  const [displayEnemyDamageMessage, setDisplayEnemyDamageMessage] = useState( false );
+  
+  function handleDisplayTextMessage(damage : string){
+    setDisplayTextMessage ( { display: true, message: damage } );
+    setTimeout(() => setDisplayTextMessage( oldValue => ({ ...oldValue, display: false }) ), 1100)
+    return 
+  }
+  
+  function handleDisplayEnemyDamageMessage( ){
+    setDisplayEnemyDamageMessage ( true );  
+    setTimeout(() => setDisplayEnemyDamageMessage( false ), 1100);    
+  }
+
+  function handleDisplayPlayerDamageMessage(    
+    posX : number,
+    posY : number
+    ){
+      setDisplayPlayerDamageMessage ({ display: true, message: currentPlayerDamage, posX: posX, posY: posY } );
+      setTimeout(() => setDisplayPlayerDamageMessage(oldValue => ({ ...oldValue, display: false }) ), 1100);      
+  }
+  
   currentPlayerPosX =  playerPos.i;
   currentPlayerPosY =  playerPos.j;
-  currentEnemiesPos = enemies;  
+  currentPlayerHealth =  playerHealth;
+  currentPlayerDamage =  playerDamage;
+  currentEnemiesPos = enemies;
 
   function DungeonGenerator(Xsize: number, Ysize: number){
 
@@ -147,6 +184,7 @@ export default function Home() {
         handleMovement={() => {
           setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) );          
           isAdjacent(num.i, num.j) && handleEnemyTurn();
+          !isAdjacent(num.i, num.j) && handleDisplayTextMessage("You can't go there");
         }}
       /> )
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,18 +195,20 @@ export default function Home() {
     walls.map((num) =>
       <TileWall key={`${num.i}-${num.j}`}
         Xpos={num.i} Ypos={num.j}
-        handleMovement={() => console.log({i: num.i, j: num.j})}
+        handleMovement={ () => { handleDisplayTextMessage("That's a wall") }  }
       /> )
   ),[walls]);
 
   const enemiesPlacement = React.useMemo(
     () =>( 
-    enemies.map((num) =>    
-        <Enemy key={ `imp-${num.i}-${num.j}` }
+    enemies.map((num, index) =>    
+        <Enemy key={index}
           Xpos={num.i} Ypos={num.j}
           handleInteraction={ () => {
             enemyInteraction( {i: num.i, j: num.j} );
             isAdjacent(num.i, num.j, true) && handleEnemyTurn();
+            isAdjacent(num.i, num.j, true) && handleDisplayPlayerDamageMessage(num.i, num.j);
+            !isAdjacent(num.i, num.j, true) && handleDisplayTextMessage("You can't hit from there");
           }}
         />
       )
@@ -180,8 +220,17 @@ export default function Home() {
 
   function handleEnemyTurn(){
     setTimeout( () => {
-      setEnemies(enemyTurn());
+      setPlayerHealth(oldValue => oldValue + enemiesAttack());
+      handleDisplayEnemyDamageMessage();
+      handlePlayerDeath();
+      setEnemies(enemiesMove());
     },100)
+  }
+
+  function handlePlayerDeath() {
+    if(currentPlayerHealth <= 0) {
+      handleDisplayTextMessage("YOU DIED");
+    }
   }
 
   return (
@@ -190,11 +239,15 @@ export default function Home() {
     { floorsTiling }
     { wallsTiling }
     { enemiesPlacement }
+
+    {displayTextMessage.display && <TextMessage textMessage={ displayTextMessage.message } />}
+    {displayPlayerDamageMessage.display && <DamageMessage damage={displayPlayerDamageMessage.message} posX={displayPlayerDamageMessage.posX} posY={displayPlayerDamageMessage.posY} /> }
+    {displayEnemyDamageMessage && damageDoneThisTurn.map((dmg, idx) => <DamageMessage key={idx} damage={dmg} index={idx} /> ) }
     
-    <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => console.log("That's you!") }/>
+    <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => handleDisplayTextMessage("That's you!") }/>
 
     <button style={{position: "absolute", left: "950px", top: "500px" }}
-      onClick={ () => handleEnemyTurn() }
+      onClick={ () => { handleEnemyTurn(); console.log(damageDoneThisTurn); } }
     > MOVE </button>
      
     </main>
