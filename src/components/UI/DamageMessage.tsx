@@ -29,8 +29,6 @@ export default function DamageMessage(
   z-index: 1000;
 `
 
-  console.log("DAMAGE TEST");
-
   return (
     <DamageMessage>
       <p> {damage} </p>

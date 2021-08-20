@@ -18,8 +18,13 @@ import DamageMessage from '../src/components/UI/DamageMessage';
 //utils
 import playerMovement from '../src/utils/playerMovement';
 import enemyInteraction from '../src/utils/enemyInteraction';
-import {enemiesAttack, enemiesMove, damageDoneThisTurn} from '../src/utils/enemyTurn';
+import {
+  enemiesAttack,
+  enemiesMove,
+  damageDoneThisTurn
+} from '../src/utils/enemyTurn';
 import isAdjacent from '../src/utils/isAdjacent';
+import findIndexOfValueInArray from '../src/utils/findIndexOfValueInArray';
 
 //player stats exports
 export let currentPlayerPosX : number;
@@ -40,7 +45,7 @@ export default function Home() {
 
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
   const [playerHealth, setPlayerHealth] = useState( 10 );
-  const [playerDamage, setPlayerDamage] = useState( 3 );
+  const [playerDamage, setPlayerDamage] = useState( 10 );
   
   const [displayTextMessage, setDisplayTextMessage] = useState( { display: false, message: "You can't do it"} );
   const [displayPlayerDamageMessage, setDisplayPlayerDamageMessage] = useState(
@@ -150,18 +155,8 @@ export default function Home() {
       initialPlayerPos = { i: dungeon.start_pos[0], j: dungeon.start_pos[1] };
    
     }
-
-    function findIndexOfValue (array : {i: number, j: number}[], value : {i: number, j: number}) {
-      for(var x = 0; x < array.length; x++) {
-          if(array[x].i == value.i) {            
-            if(array[x].j == value.j) {              
-              return x;
-          }}
-      }
-      return -1;
-    }
     
-    cleanedUpFloors.splice(findIndexOfValue (cleanedUpFloors, initialPlayerPos), 1);
+    cleanedUpFloors.splice(findIndexOfValueInArray (cleanedUpFloors, initialPlayerPos), 1);
 
     for (let x = 0; x < cleanedUpFloors.length; x++) {
       
@@ -214,12 +209,17 @@ export default function Home() {
       )
   ),[enemies]);
 
+  const playerCharacter = React.useMemo(
+    () => (
+      <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => handleDisplayTextMessage("That's you!") }/>
+    ),[playerPos]) 
+
   useEffect(() => {
-    DungeonGenerator(29, 29);
+    DungeonGenerator(29, 29);    
   },[setDungeonLevel]);
 
   function handleEnemyTurn(){
-    setTimeout( () => {
+    setTimeout( () => {      
       setPlayerHealth(oldValue => oldValue + enemiesAttack());
       handleDisplayEnemyDamageMessage();
       handlePlayerDeath();
@@ -239,15 +239,14 @@ export default function Home() {
     { floorsTiling }
     { wallsTiling }
     { enemiesPlacement }
+    { playerCharacter }
 
     {displayTextMessage.display && <TextMessage textMessage={ displayTextMessage.message } />}
     {displayPlayerDamageMessage.display && <DamageMessage damage={displayPlayerDamageMessage.message} posX={displayPlayerDamageMessage.posX} posY={displayPlayerDamageMessage.posY} /> }
     {displayEnemyDamageMessage && damageDoneThisTurn.map((dmg, idx) => <DamageMessage key={idx} damage={dmg} index={idx} /> ) }
-    
-    <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => handleDisplayTextMessage("That's you!") }/>
 
     <button style={{position: "absolute", left: "950px", top: "500px" }}
-      onClick={ () => { handleEnemyTurn(); console.log(damageDoneThisTurn); } }
+      onClick={ () => { handleEnemyTurn(); } }
     > MOVE </button>
      
     </main>

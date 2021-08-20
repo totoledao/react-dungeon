@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import ActorProps from '../types/Actor';
@@ -8,10 +8,12 @@ import { currentPlayerDamage } from '../../pages';
 import isAdjacent from '../utils/isAdjacent';
 
 import imp from '../sprites/imp_idle_anim_f0.png';
+import { getDeadEnemies } from '../utils/enemyTurn';
 
 export default function Enemy ({ Xpos , Ypos, handleInteraction } : ActorProps ) {
 
   const [health, setHealth] = useState(10);
+  const [isAlive, setIsAlive] = useState(true);
 
   const Enemy = styled.div`
   position: absolute;
@@ -24,7 +26,16 @@ export default function Enemy ({ Xpos , Ypos, handleInteraction } : ActorProps )
   function takeDamage () {    
     isAdjacent(Xpos , Ypos, true) && setHealth(oldValue => oldValue - currentPlayerDamage);
   }
-      
+  
+  if( isAlive && health <= 0 ){
+    getDeadEnemies(Xpos, Ypos);
+    setIsAlive(false);
+  }
+
+  if( health <= 0 ){
+    return null
+  }
+  
   return(
     <Enemy>
       <Image src={imp} alt="imp" width={32} height={32}

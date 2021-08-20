@@ -25,7 +25,6 @@ export default function playerMovement(
       &&
       playerPos.j - nextPos.j !== 1 ||
       playerPos.j - nextPos.j !== -1
-  ) console.log("too far"); return { i: playerPos.i, j: playerPos.j }
-
-
+  ) console.log("You cannot walk diagonally"); return { i: playerPos.i, j: playerPos.j }
+  
 }
