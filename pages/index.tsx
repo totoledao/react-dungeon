@@ -288,10 +288,6 @@ export default function Home() {
     <button style={{position: "absolute", left: "950px", top: "500px" }}
       onClick={ () => { handleEnemyTurn(); } }
     > MOVE </button>
-    
-    <button style={ {position: "absolute", left: "930px", top: "400px", backgroundColor: "red"} } 
-       { ...lo }
-    > LONGBOI </button>
      
     </main>
   )
