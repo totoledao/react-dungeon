@@ -6,6 +6,7 @@ import styles from '../styles/Home.module.css';
 //tiles
 import TileFloor from "../src/components/TileFloor";
 import TileWall from "../src/components/TileWall";
+import Door from "../src/components/Door";
 
 //actors
 import Player from "../src/components/Player";
@@ -25,6 +26,7 @@ import {
 } from '../src/utils/enemyTurn';
 import isAdjacent from '../src/utils/isAdjacent';
 import findIndexOfValueInArray from '../src/utils/findIndexOfValueInArray';
+import useLongPress from '../src/utils/useLongPress';
 
 //player stats exports
 export let currentPlayerPosX : number;
@@ -41,6 +43,7 @@ export default function Home() {
   const [floors, setFloors] = useState<{ i: number, j: number}[]>([]);
   const [walls, setWalls] = useState<{ i: number, j: number}[]>([]);
   const [enemies, setEnemies] = useState<{ i: number, j: number}[]>([]);
+  const [doors, setDoors] = useState<{ i: number, j: number}[]>([]);
   const [dungeonLevel, setDungeonLevel] = useState( 1 );
 
   const [playerPos, setPlayerPos] = useState<{ i: number, j: number}>({i: 10, j: 10});
@@ -111,6 +114,8 @@ export default function Home() {
 
     let totalFloors : { i: number, j: number}[] = [];
     let totalWalls : { i: number, j: number}[] = [];
+    let totalDoors : { i: number, j: number}[] = [];
+
     let cleanedUpFloors : { i: number, j: number}[] = [];
 
     pathFinderGrid = new pathfinding.Grid(Xsize, Ysize);    
@@ -147,16 +152,34 @@ export default function Home() {
       //piece.walls.get([x, y]); //x, y- local position of piece, returns true if wall, false if empty
       for (let exit of piece.exits) {
           let {x, y, dest_piece} = exit; // local position of exit and piece it exits to
-          piece.global_pos([x, y]); // [x, y] global pos of the exit          
-      }  
+          piece.global_pos([x, y]); // [x, y] global pos of the exit
+         
+          totalDoors.push({
+            i: piece.global_pos([exit[0][0], exit[0][1]])[0],
+            j: piece.global_pos([exit[0][0], exit[0][1]])[1]
+          });
+
+      }
     
       setPlayerPos({ i: dungeon.start_pos[0], j: dungeon.start_pos[1] });
 
       initialPlayerPos = { i: dungeon.start_pos[0], j: dungeon.start_pos[1] };
    
-    }
+    }  
+
+    let cleanedUpDoors = totalDoors.filter((pos, index, self) =>
+      index === self.findIndex((p) => (
+        p.i === pos.i && p.j === pos.j
+      ))
+    )
+    
+    setDoors(cleanedUpDoors);
     
     cleanedUpFloors.splice(findIndexOfValueInArray (cleanedUpFloors, initialPlayerPos), 1);
+
+    for (let index = 0; index < cleanedUpDoors.length; index++) {
+      cleanedUpFloors.splice(findIndexOfValueInArray (cleanedUpFloors, cleanedUpDoors[index]), 1);      
+    }
 
     for (let x = 0; x < cleanedUpFloors.length; x++) {
       
@@ -209,6 +232,19 @@ export default function Home() {
       )
   ),[enemies]);
 
+  const doorsPlacement = React.useMemo(
+      () =>( 
+      doors.map((num, idx) =>
+        <Door key={`door${idx}`}
+         Xpos={num.i} Ypos={num.j}         
+         handleMovement={ () => {
+          isAdjacent(num.i, num.j, true) && handleEnemyTurn();
+          !isAdjacent(num.i, num.j, true) && handleDisplayTextMessage("You see a door far away");
+          } }
+        />
+      )
+    ),[doors]);
+
   const playerCharacter = React.useMemo(
     () => (
       <Player Xpos={playerPos.i} Ypos={playerPos.j} handleInteraction={ () => handleDisplayTextMessage("That's you!") }/>
@@ -233,6 +269,8 @@ export default function Home() {
     }
   }
 
+  const lo = useLongPress(() => console.log("Long"), () => console.log("short") );
+
   return (
     <main>    
 
@@ -241,6 +279,8 @@ export default function Home() {
     { enemiesPlacement }
     { playerCharacter }
 
+    { doorsPlacement }
+
     {displayTextMessage.display && <TextMessage textMessage={ displayTextMessage.message } />}
     {displayPlayerDamageMessage.display && <DamageMessage damage={displayPlayerDamageMessage.message} posX={displayPlayerDamageMessage.posX} posY={displayPlayerDamageMessage.posY} /> }
     {displayEnemyDamageMessage && damageDoneThisTurn.map((dmg, idx) => <DamageMessage key={idx} damage={dmg} index={idx} /> ) }
@@ -248,6 +288,10 @@ export default function Home() {
     <button style={{position: "absolute", left: "950px", top: "500px" }}
       onClick={ () => { handleEnemyTurn(); } }
     > MOVE </button>
+    
+    <button style={ {position: "absolute", left: "930px", top: "400px", backgroundColor: "red"} } 
+       { ...lo }
+    > LONGBOI </button>
      
     </main>
   )
