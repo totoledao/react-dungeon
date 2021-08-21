@@ -38,7 +38,7 @@ export default function Enemy ({ Xpos , Ypos, handleInteraction } : ActorProps )
   
   return(
     <Enemy>
-      <Image src={imp} alt="imp" width={32} height={32}
+      <Image src={imp} alt="imp" width={32} height={32} layout="fixed"
         onClick={ () => { handleInteraction(); takeDamage(); }
       }/>
     </Enemy>  

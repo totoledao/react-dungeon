@@ -20,7 +20,8 @@ export default function Player({ Xpos, Ypos, handleInteraction, ...rest } : Acto
   return(
 
     <Player>
-      <Image src={player} alt="player" width={wi} height={he} onClick={ handleInteraction }/>
+      <Image src={player} alt="player" width={wi} height={he} layout="fixed"
+        onClick={ handleInteraction }/>
     </Player>
   )
   

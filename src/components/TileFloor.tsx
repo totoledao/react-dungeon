@@ -45,7 +45,7 @@ export default function TileFloor({Xpos, Ypos, handleMovement, ...rest} : TilePr
 
   return (
       <Tile>
-        <Image src={floor[rng]} alt="floor" width="32" height="32"
+        <Image src={floor[rng]} alt="floor" width="32" height="32" layout="fixed"
           onClick={ handleMovement }
         />
       </Tile>

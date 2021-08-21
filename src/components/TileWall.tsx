@@ -42,7 +42,7 @@ export default function TileWall({Xpos, Ypos, handleMovement, ...rest} : TilePro
 
   return (
       <Tile>
-        <Image src={wall[rng]} alt="wall" width="32" height="32"
+        <Image src={wall[rng]} alt="wall" width="32" height="32" layout="fixed"
           onClick={ handleMovement }
         />  
       </Tile>
