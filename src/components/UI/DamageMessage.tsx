@@ -21,11 +21,10 @@ export default function DamageMessage(
   width: 1.5em;
   height: 1.5em;
   top: ${((posX)*32)-(15*(index+1))}px;
-  left: ${(posY)*32}px;  
-  //text-align: top;
+  left: ${(posY)*32}px; 
   color: red;
   font-size: 1.1rem;
-  outline-color: white;
+  text-shadow:  1px 1px 3px black;
   z-index: 1000;
 `
 
