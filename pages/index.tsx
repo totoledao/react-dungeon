@@ -26,7 +26,6 @@ import {
 } from '../src/utils/enemyTurn';
 import isAdjacent from '../src/utils/isAdjacent';
 import findIndexOfValueInArray from '../src/utils/findIndexOfValueInArray';
-import useLongPress from '../src/utils/useLongPress';
 
 //player stats exports
 export let currentPlayerPosX : number;
@@ -268,8 +267,6 @@ export default function Home() {
       handleDisplayTextMessage("YOU DIED");
     }
   }
-
-  const lo = useLongPress(() => console.log("Long"), () => console.log("short") );
 
   return (
     <main>    
