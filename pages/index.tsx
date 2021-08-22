@@ -260,8 +260,10 @@ export default function Home() {
 
   useEffect(() => {
     DungeonGenerator(29, 29);
-    window.addEventListener('mousedown', () => mouseDown = new Date().getTime(), true)
-    window.addEventListener('mouseup', () => mouseUp = new Date().getTime(), true)    
+    window.addEventListener('mousedown', () => mouseDown = new Date().getTime(), true);
+    window.addEventListener('mouseup', () => mouseUp = new Date().getTime(), true);    
+    window.addEventListener('touchstart', () => mouseDown = new Date().getTime(), true);
+    window.addEventListener('touchend', () => mouseUp = new Date().getTime(), true);   
   },[setDungeonLevel]);
 
   function handleEnemyTurn(){
