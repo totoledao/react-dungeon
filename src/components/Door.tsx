@@ -17,7 +17,7 @@ export default function Door({Xpos, Ypos, handleMovement, ...rest} : TileProps) 
     position: absolute;
     left: ${Ypos*32}px;  
     top: ${Xpos*32}px;
-    z-index: 20;
+    z-index: 20;    
     `;
 
   function openDoor(){
@@ -33,7 +33,7 @@ export default function Door({Xpos, Ypos, handleMovement, ...rest} : TileProps) 
     return (
         <Door>
           <Image src={door_closed} alt="door" width="32" height="32" layout="fixed"
-            onClick={ () => { handleMovement(); openDoor(); } }
+            onClick={ (e) => { e.preventDefault(); handleMovement(); openDoor(); } }
           />
         </Door>
     )
