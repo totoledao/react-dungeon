@@ -26,6 +26,7 @@ import {
 } from '../src/utils/enemyTurn';
 import isAdjacent from '../src/utils/isAdjacent';
 import findIndexOfValueInArray from '../src/utils/findIndexOfValueInArray';
+import longPress from '../src/utils/longPress';
 
 //player stats exports
 export let currentPlayerPosX : number;
@@ -36,6 +37,8 @@ export let currentPlayerDamage : number;
 export let currentEnemiesPos : { i: number, j: number}[];
 export let pathFinderGrid : any;
 export let pathFinder : any;
+export let mouseDown : number;
+export let mouseUp : number;
 
 export default function Home() {
 
@@ -235,11 +238,17 @@ export default function Home() {
       () =>( 
       doors.map((num, idx) =>
         <Door key={`door${idx}`}
-         Xpos={num.i} Ypos={num.j}         
-         handleMovement={ () => {
-          isAdjacent(num.i, num.j, true) && handleEnemyTurn();
-          !isAdjacent(num.i, num.j, true) && handleDisplayTextMessage("You see a door far away");
-          } }
+          Xpos={num.i} Ypos={num.j}         
+          handleMovement={ () => {
+            if(longPress() === true){
+              isAdjacent(num.i, num.j, true) && handleEnemyTurn();
+              !isAdjacent(num.i, num.j, true) && handleDisplayTextMessage("You see a door far away");              
+            } else {
+              setPlayerPos(oldValue => playerMovement(oldValue, {i: num.i, j: num.j} ) );
+              isAdjacent(num.i, num.j, true) && handleEnemyTurn();
+              !isAdjacent(num.i, num.j, true) && handleDisplayTextMessage("You see a door far away");             
+            }
+          }}          
         />
       )
     ),[doors]);
@@ -250,7 +259,9 @@ export default function Home() {
     ),[playerPos]) 
 
   useEffect(() => {
-    DungeonGenerator(29, 29);    
+    DungeonGenerator(29, 29);
+    window.addEventListener('mousedown', () => mouseDown = new Date().getTime(), true)
+    window.addEventListener('mouseup', () => mouseUp = new Date().getTime(), true)    
   },[setDungeonLevel]);
 
   function handleEnemyTurn(){
@@ -285,7 +296,7 @@ export default function Home() {
     <button style={{position: "absolute", left: "950px", top: "500px" }}
       onClick={ () => { handleEnemyTurn(); } }
     > MOVE </button>
-     
+
     </main>
   )
 }

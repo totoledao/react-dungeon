@@ -7,6 +7,7 @@ import door_closed from "../sprites/door/doors_leaf_closed.png";
 import door_open from "../sprites/door/doors_leaf_open.png";
 import { pathFinderGrid } from '../../pages';
 import isAdjacent from '../utils/isAdjacent';
+import longPress from '../utils/longPress';
 
 export default function Door({Xpos, Ypos, handleMovement, ...rest} : TileProps) {
 
@@ -24,7 +25,7 @@ export default function Door({Xpos, Ypos, handleMovement, ...rest} : TileProps) 
   }
 
   function closeDoor(){
-    isAdjacent(Xpos , Ypos, true) && setDoorIsClosed(true);    
+    longPress() && isAdjacent(Xpos , Ypos, true) && setDoorIsClosed(true);    
   }
 
   if (doorIsClosed) {
